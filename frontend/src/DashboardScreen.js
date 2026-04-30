@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
-const API_BASE = 'http://192.168.8.166:5000/api';
+const API_BASE = 'https://wmt-mobile-app-xksy.vercel.app/api';
 
 const DashboardScreen = ({ navigation, route }) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;

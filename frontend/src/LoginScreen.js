@@ -7,7 +7,7 @@ const { width, height } = Dimensions.get('window');
 
 const API_URL = Platform.OS === 'web'
     ? 'http://localhost:5000'
-    : 'http://192.168.8.166:5000';
+    : 'https://wmt-mobile-app-xksy.vercel.app/api';
 
 const saveToken = async (token) => {
     if (Platform.OS === 'web') {

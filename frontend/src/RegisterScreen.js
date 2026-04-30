@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const API_URL = Platform.OS === 'web'
     ? 'http://localhost:5000'
-    : 'http://192.168.8.166:5000';
+    : 'https://wmt-mobile-app-xksy.vercel.app/api';
 
 const RegisterScreen = ({ navigation }) => {
     const [name, setName] = useState('');

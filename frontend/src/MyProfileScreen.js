@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert,
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 
-const API_BASE = 'http://192.168.8.166:5000/api';
+const API_BASE = 'https://wmt-mobile-app-xksy.vercel.app/api';
 
 
 const getToken = async () => {
