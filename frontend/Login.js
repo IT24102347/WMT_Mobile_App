@@ -18,7 +18,7 @@ const LoginScreen = () => {
 
         try {
             
-            const API_URL = 'https://wmt-mobile-app-xksy.vercel.app/api/students/login'; 
+            const API_URL = 'https://wmt-mobile-app-xksy.vercel.app';
 
             console.log("Sending request to:", API_URL);
 
