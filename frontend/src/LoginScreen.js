@@ -59,7 +59,7 @@ const LoginScreen = ({ navigation }) => {
             if (response.data.token) {
                 await saveToken(response.data.token);
 
-                // ✅ Role AsyncStorage එකේ save කිරීම
+                // ✅ Role AsyncStorage 
                 if (Platform.OS === 'web') {
                         localStorage.setItem('userRole', isAdmin ? 'admin' : 'student');
                     } else {

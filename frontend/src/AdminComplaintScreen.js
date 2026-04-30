@@ -216,7 +216,7 @@ const AdminComplaintScreen = ({ navigation }) => {
                         <Text style={styles.modalLabel}>Admin Reply</Text>
                         <TextInput
                             style={[styles.modalInput, { height: 90 }]}
-                            placeholder="Student ට reply කරන්න..."
+                            placeholder="Reply to Student..."
                             value={replyText}
                             onChangeText={setReplyText}
                             multiline

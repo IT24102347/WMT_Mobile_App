@@ -79,7 +79,7 @@ exports.deletePayment = async (req, res) => {
 exports.generateMonthlyPayments = async (req, res) => {
     try {
         const { month } = req.body; // e.g. "2026-05"
-        if (!month) return res.status(400).json({ msg: 'Month අනිවාර්යයි. (e.g. 2026-05)' });
+        if (!month) return res.status(400).json({ msg: 'The month is mandatory. (e.g. 2026-05)' });
 
         const approvedBookings = await Booking.find({ status: 'Approved' })
             .populate('room', 'pricePerMonth')

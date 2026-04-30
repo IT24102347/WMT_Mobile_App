@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 module.exports = function (req, res, next) {
     let token = req.header('x-auth-token');
 
-    // Header එක පරීක්ෂා කිරීම
+    // Checking the header
     if (!token) {
         const authHeader = req.header('Authorization');
         if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -16,7 +16,7 @@ module.exports = function (req, res, next) {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key');
         
-        // Admin හෝ Student දත්ත req.user වෙත දැමීම
+        // Setting Admin or Student data in req.user
         if (decoded.admin) {
             req.user = { ...decoded.admin, role: 'admin' };
         } else if (decoded.student) {

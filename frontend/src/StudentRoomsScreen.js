@@ -59,7 +59,7 @@ const StudentRoomsScreen = ({ navigation }) => {
 
     const handleBook = async () => {
         if (!startDate) {
-            Platform.OS === 'web' ? alert('Start Date ඇතුළත් කරන්න (YYYY-MM-DD)') : Alert.alert('Error', 'Start Date ඇතුළත් කරන්න');
+            Platform.OS === 'web' ? alert('Enter Start Date (YYYY-MM-DD)') : Alert.alert('Error', 'Enter Start Date');
             return;
         }
         setBooking(true);
@@ -72,7 +72,7 @@ const StudentRoomsScreen = ({ navigation }) => {
             });
             const data = await res.json();
             if (res.ok) {
-                const msg = 'Booking request sent! ✅\nAdmin approval ලැබීමෙන් confirm වේ.';
+                const msg = 'Booking request sent! ✅\nAdmin approval will be confirmed.';
                 Platform.OS === 'web' ? alert(msg) : Alert.alert('Success! 🎉', msg);
                 setBookingModal(false);
                 setSelectedRoom(null);
@@ -112,9 +112,9 @@ const StudentRoomsScreen = ({ navigation }) => {
         };
 
         if (Platform.OS === 'web') {
-            if (window.confirm('Booking cancel කිරීමට විශ්වාසද?')) doCancel();
+            if (window.confirm('Are you sure you want to cancel the booking?')) doCancel();
         } else {
-            Alert.alert('Cancel Booking', 'Booking cancel කිරීමට විශ්වාසද?', [
+            Alert.alert('Cancel Booking', 'Are you sure you want to cancel the booking?', [
                 { text: 'No', style: 'cancel' },
                 { text: 'Yes', style: 'destructive', onPress: doCancel }
             ]);

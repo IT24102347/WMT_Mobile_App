@@ -74,7 +74,7 @@ const StudentPaymentScreen = ({ navigation }) => {
 
     const handlePay = async () => {
         if (!payMonth) {
-            const msg = 'Month ඇතුළත් කරන්න (e.g. 2026-05)';
+            const msg = 'Enter Month (e.g. 2026-05)';
             Platform.OS === 'web' ? alert(msg) : Alert.alert('Error', msg);
             return;
         }
@@ -85,7 +85,7 @@ const StudentPaymentScreen = ({ navigation }) => {
                 p => p.booking?._id === selectedBooking._id && p.month === payMonth
             );
             if (existingPayment) {
-                const msg = `${payMonth} සඳහා Payment දැනටමත් ඇත.`;
+                const msg = `${payMonth} Payment for is already available.`;
                 Platform.OS === 'web' ? alert(msg) : Alert.alert('Already Submitted', msg);
                 setPaying(false);
                 return;
@@ -106,7 +106,7 @@ const StudentPaymentScreen = ({ navigation }) => {
             const data = await res.json();
             if (res.ok) {
                 setPayModal(false);
-                const successMsg = `Payment submit කළා! Admin verify කරනවා.\nRs. ${(selectedBooking.room?.pricePerMonth || 0).toLocaleString()} - ${payMonth}`;
+                const successMsg = `Payment submitted! Admin verify in progress.\nRs. ${(selectedBooking.room?.pricePerMonth || 0).toLocaleString()} - ${payMonth}`;
                 Platform.OS === 'web' ? alert(successMsg) : Alert.alert('Success ✅', successMsg);
                 fetchPayments();
             } else {
@@ -114,7 +114,7 @@ const StudentPaymentScreen = ({ navigation }) => {
                 Platform.OS === 'web' ? alert(errMsg) : Alert.alert('Error', errMsg);
             }
         } catch (err) {
-            const errMsg = 'Payment submit කිරීමේ error.';
+            const errMsg = 'Payment submission error.';
             Platform.OS === 'web' ? alert(errMsg) : Alert.alert('Error', errMsg);
         } finally {
             setPaying(false);

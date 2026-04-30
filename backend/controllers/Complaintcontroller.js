@@ -5,7 +5,7 @@ exports.createComplaint = async (req, res) => {
     try {
         const { subject, message, category } = req.body;
         if (!subject || !message) {
-            return res.status(400).json({ msg: 'Subject සහ Message අනිවාර්යයි.' });
+            return res.status(400).json({ msg: 'Subject and Message are required.' });
         }
 
         const complaint = new Complaint({
@@ -17,7 +17,7 @@ exports.createComplaint = async (req, res) => {
         await complaint.save();
         await complaint.populate('student', 'name studentId email');
 
-        res.status(201).json({ msg: 'Complaint submitted! Admin review කරනවා.', complaint });
+        res.status(201).json({ msg: 'Complaint submitted! Admin review is pending.', complaint });
     } catch (err) {
         console.error('createComplaint error:', err.message);
         res.status(500).json({ msg: 'Server Error' });

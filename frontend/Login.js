@@ -7,18 +7,17 @@ const LoginScreen = () => {
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async () => {
-        console.log("Button Clicked!"); // 1. බටන් එක වැඩද බලන්න මෙතන check කරන්න
+        console.log("Button Clicked!"); 
 
         if (!email || !password) {
-            Alert.alert("Error", "කරුණාකර Email සහ Password ඇතුළත් කරන්න.");
+            Alert.alert("Error", "Please enter your email and password..");
             return;
         }
 
         setLoading(true);
 
         try {
-            // ⚠️ ඔබේ පරිගණකයේ IPv4 ලිපිනය මෙතනට අනිවාර්යයෙන්ම දාන්න (උදා: 192.168.1.10)
-            // Localhost (127.0.0.1) පාවිච්චි කරන්න එපා.
+            
             const API_URL = 'http://192.168.8.166:5000/api/students/login'; 
 
             console.log("Sending request to:", API_URL);
@@ -39,15 +38,15 @@ const LoginScreen = () => {
             console.log("Response from Server:", data);
 
             if (response.ok) {
-                Alert.alert("Success", "Login සාර්ථකයි!");
-                // Dashboard එකට navigate කරන code එක මෙතනට දාන්න
+                Alert.alert("Success", "Login successful!");
+                // Navigate to the dashboard or another screen
             } else {
                 Alert.alert("Login Failed", data.msg || "Invalid credentials");
             }
 
         } catch (error) {
             console.error("Network Error Details:", error);
-            Alert.alert("Network Error", "සර්වර් එකට සම්බන්ධ වීමට නොහැක. ඔබගේ IP එක සහ Network එක පරීක්ෂා කරන්න.");
+            Alert.alert("Network Error", "Failed to connect to the server. Please check your IP and Network connection.");
         } finally {
             setLoading(false);
         }

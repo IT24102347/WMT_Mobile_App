@@ -18,11 +18,11 @@ const AdminDashboardScreen = ({ navigation }) => {
     }, []);
 
     const menuItems = [
-        { title: 'Student\nManagement', icon: '👤', member: 'Rashmi',   bg: '#FF6B6B', accent: '#FF8E8E', screen: 'StudentManagement' },
-        { title: 'Room\nManagement',   icon: '🏠', member: 'Samadi',    bg: '#2EC4B6', accent: '#3DD9CA', screen: 'AdminRooms' },
-        { title: 'Payments',           icon: '💳', member: 'Neethini',  bg: '#3A86FF', accent: '#5E9EFF', screen: 'AdminPayments' },
-        { title: 'Room\nBooking',      icon: '📅', member: 'Methsani',  bg: '#8338EC', accent: '#9B59F5', screen: 'AdminBookings' },
-        { title: 'Complaints',         icon: '📢', member: 'Wathmini',  bg: '#FB5607', accent: '#FF7C3A', screen: 'AdminComplaints' },
+        { title: 'Student\nManagement', icon: '👤',  bg: '#FF6B6B', accent: '#FF8E8E', screen: 'StudentManagement' },
+        { title: 'Room\nManagement',   icon: '🏠',   bg: '#2EC4B6', accent: '#3DD9CA', screen: 'AdminRooms' },
+        { title: 'Payments',           icon: '💳',   bg: '#3A86FF', accent: '#5E9EFF', screen: 'AdminPayments' },
+        { title: 'Room\nBooking',      icon: '📅',   bg: '#8338EC', accent: '#9B59F5', screen: 'AdminBookings' },
+        { title: 'Complaints',         icon: '📢',   bg: '#FB5607', accent: '#FF7C3A', screen: 'AdminComplaints' },
     ];
 
     const stats = [

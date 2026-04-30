@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 const API_BASE = 'http://192.168.8.166:5000/api';
 
-// ✅ Web + Mobile token helper
+
 const getToken = async () => {
     if (Platform.OS === 'web') return localStorage.getItem('token');
     return await AsyncStorage.getItem('token');
@@ -65,7 +65,7 @@ const MyProfileScreen = ({ navigation }) => {
 
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
-            Alert.alert("Permission Denied", "ගැලරියට අවසර දෙන්න.");
+            Alert.alert("Permission Denied", "Allow gallery access.");
             return;
         }
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -99,7 +99,7 @@ const MyProfileScreen = ({ navigation }) => {
 
     const handleChangePassword = async () => {
         if (!passData.currentPassword || !passData.newPassword) {
-            Alert.alert("Error", "Passwords ඇතුළත් කරන්න.");
+            Alert.alert("Error", "Please fill all password fields.");
             return;
         }
         try {

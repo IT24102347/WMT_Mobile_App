@@ -76,7 +76,7 @@ const Adminroomscreen = ({ navigation }) => {
             const method = editingRoom ? 'PUT' : 'POST';
             const url = editingRoom ? `${API_BASE}/rooms/${editingRoom._id}` : `${API_BASE}/rooms`;
 
-            // Backend එක බලාපොරොත්තු වන විදිහට දත්ත සකස් කිරීම
+            
             const payload = {
                 ...form,
                 pricePerMonth: Number(form.pricePerMonth),
@@ -88,7 +88,7 @@ const Adminroomscreen = ({ navigation }) => {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-auth-token': token // 👈 "No token" error එක fix කරන්නේ මේ header එකෙන්
+                    'x-auth-token': token 
                 },
                 body: JSON.stringify(payload)
             });

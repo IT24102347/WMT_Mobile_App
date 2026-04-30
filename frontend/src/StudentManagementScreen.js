@@ -74,11 +74,11 @@ const StudentManagementScreen = () => {
 
   const handleSave = async () => {
     if (!formData.name || !formData.email || !formData.course) {
-      Alert.alert("Validation", "Name, Email සහ Course අනිවාර්යයි.");
+      Alert.alert("Validation", "Name, Email, and Course are required.");
       return;
     }
     if (!editingId && !formData.password) {
-      Alert.alert("Validation", "Password අනිවාර්යයි.");
+      Alert.alert("Validation", "Password is required.");
       return;
     }
 

@@ -8,11 +8,11 @@ exports.registerStudent = async (req, res) => {
         const { name, email, password, course, phone } = req.body;
 
         if (!name || !email || !password) {
-            return res.status(400).json({ msg: "Name, Email සහ Password අනිවාර්යයි." });
+            return res.status(400).json({ msg: "Name, Email and Password are mandatory." });
         }
 
         let student = await Student.findOne({ email: email.trim().toLowerCase() });
-        if (student) return res.status(400).json({ msg: "මෙම Email එක දැනටමත් පාවිච්චි කර ඇත." });
+        if (student) return res.status(400).json({ msg: "This Email is already registered." });
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -27,7 +27,7 @@ exports.registerStudent = async (req, res) => {
         });
 
         await student.save();
-        res.status(201).json({ msg: "ලියාපදිංචිය සාර්ථකයි!", student: { studentId: student.studentId, name: student.name } });
+        res.status(201).json({ msg: "Registration successful!", student: { studentId: student.studentId, name: student.name } });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: "Server Error", error: err.message });
@@ -39,10 +39,10 @@ exports.loginStudent = async (req, res) => {
     const { email, password } = req.body;
     try {
         let student = await Student.findOne({ email: email.trim().toLowerCase() });
-        if (!student) return res.status(400).json({ msg: "Email හෝ Password වැරදියි" });
+        if (!student) return res.status(400).json({ msg: "Email or Password is incorrect" });
 
         const isMatch = await bcrypt.compare(password, student.password);
-        if (!isMatch) return res.status(400).json({ msg: "Email හෝ Password වැරදියි" });
+        if (!isMatch) return res.status(400).json({ msg: "Email or Password is incorrect" });
 
         const payload = { student: { id: student.id } };
         jwt.sign(payload, process.env.JWT_SECRET || 'your_jwt_secret_key', { expiresIn: '24h' }, (err, token) => {
@@ -113,13 +113,13 @@ exports.changePassword = async (req, res) => {
         if (!student) return res.status(404).json({ msg: 'Student not found' });
 
         const isMatch = await bcrypt.compare(currentPassword, student.password);
-        if (!isMatch) return res.status(400).json({ msg: "පැරණි මුරපදය වැරදියි" });
+        if (!isMatch) return res.status(400).json({ msg: "The old password is incorrect" });
 
         const salt = await bcrypt.genSalt(10);
         student.password = await bcrypt.hash(newPassword, salt);
         await student.save();
 
-        res.json({ msg: "මුරපදය සාර්ථකව වෙනස් විය." });
+        res.json({ msg: "Password changed successfully!" });
     } catch (err) {
         res.status(500).json({ error: "Server error" });
     }

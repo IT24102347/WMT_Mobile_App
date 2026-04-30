@@ -6,13 +6,13 @@ exports.createBooking = async (req, res) => {
     try {
         const { roomId, startDate, note } = req.body;
         if (!roomId || !startDate) {
-            return res.status(400).json({ msg: 'Room සහ Start Date අනිවාර්යයි.' });
+            return res.status(400).json({ msg: 'The room and start date are mandatory.' });
         }
 
         const room = await Room.findById(roomId);
         if (!room) return res.status(404).json({ msg: 'Room not found' });
         if (room.availabilityStatus !== 'Available') {
-            return res.status(400).json({ msg: 'මෙම Room දැනට Available නැත.' });
+            return res.status(400).json({ msg: 'This room is not available.' });
         }
 
         // Student already has active booking for this room?
@@ -21,12 +21,12 @@ exports.createBooking = async (req, res) => {
             room: roomId,
             status: { $in: ['Pending', 'Approved'] }
         });
-        if (existing) return res.status(400).json({ msg: 'ඔබ දැනටමත් මෙම Room එකේ Booking request කර ඇත.' });
+        if (existing) return res.status(400).json({ msg: 'You already have a booking request for this room.' });
 
         // Anyone else has approved booking for this room already at capacity?
         const approvedCount = await Booking.countDocuments({ room: roomId, status: 'Approved' });
         if (approvedCount >= room.capacity) {
-            return res.status(400).json({ msg: 'මෙම Room Full වෙලා. වෙනත් Room එකක් select කරන්න.' });
+            return res.status(400).json({ msg: 'This room is full. Please select another room.' });
         }
 
         const booking = new Booking({
@@ -40,7 +40,7 @@ exports.createBooking = async (req, res) => {
             { path: 'student', select: 'name studentId email' },
             { path: 'room', select: 'roomNumber roomType pricePerMonth' }
         ]);
-        res.status(201).json({ msg: 'Booking request sent! Admin approval ලැබේ.', booking });
+        res.status(201).json({ msg: 'Booking request sent! Admin approval is pending.', booking });
     } catch (err) {
         console.error('createBooking error:', err.message);
         res.status(500).json({ msg: 'Server Error' });
@@ -65,10 +65,10 @@ exports.cancelBooking = async (req, res) => {
         const booking = await Booking.findOne({ _id: req.params.id, student: req.user.id });
         if (!booking) return res.status(404).json({ msg: 'Booking not found' });
         if (booking.status === 'Approved') {
-            return res.status(400).json({ msg: 'Approved booking cancel කළ නොහැක. Admin හා සම්බන්ධ වන්න.' });
+            return res.status(400).json({ msg: 'Approved booking cannot be cancelled. Please contact Admin.' });
         }
         if (booking.status === 'Cancelled') {
-            return res.status(400).json({ msg: 'දැනටමත් cancelled.' });
+            return res.status(400).json({ msg: 'Already cancelled.' });
         }
         booking.status = 'Cancelled';
         await booking.save();
@@ -96,7 +96,7 @@ exports.approveBooking = async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id);
         if (!booking) return res.status(404).json({ msg: 'Booking not found' });
-        if (booking.status === 'Approved') return res.status(400).json({ msg: 'දැනටමත් Approved.' });
+        if (booking.status === 'Approved') return res.status(400).json({ msg: 'Booking is already approved.' });
 
         booking.status = 'Approved';
         await booking.save();

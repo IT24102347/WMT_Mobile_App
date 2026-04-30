@@ -84,7 +84,7 @@ const AdminPaymentScreen = ({ navigation }) => {
 
     const handleGenerate = async () => {
         if (!genMonth) {
-            Platform.OS === 'web' ? alert('Month ඇතුළත් කරන්න (e.g. 2026-05)') : Alert.alert('Error', 'Month ඇතුළත් කරන්න');
+            Platform.OS === 'web' ? alert('Enter Month (e.g. 2026-05)') : Alert.alert('Error', 'Enter Month');
             return;
         }
         setGenerating(true);
@@ -168,8 +168,8 @@ const AdminPaymentScreen = ({ navigation }) => {
                     ListEmptyComponent={
                         <View style={{ alignItems: 'center', marginTop: 60 }}>
                             <Text style={{ fontSize: 40 }}>💰</Text>
-                            <Text style={{ color: '#aaa', marginTop: 10 }}>Payments නැත</Text>
-                            <Text style={{ color: '#aaa', fontSize: 12, marginTop: 5 }}>+ Generate button click කරලා monthly payments create කරන්න</Text>
+                            <Text style={{ color: '#aaa', marginTop: 10 }}>No Payments</Text>
+                            <Text style={{ color: '#aaa', fontSize: 12, marginTop: 5 }}>+ Click the Generate button to create monthly payments.</Text>
                         </View>
                     }
                     renderItem={({ item }) => (
@@ -227,7 +227,7 @@ const AdminPaymentScreen = ({ navigation }) => {
                             onChangeText={setGenMonth}
                         />
                         <Text style={{ color: '#888', fontSize: 12, marginBottom: 16 }}>
-                            Approved bookings ඔක්කොම සඳහා payment records create වේ.
+                            Approved bookings will have payment records created for them.
                         </Text>
                         <TouchableOpacity
                             style={[styles.genConfirmBtn, generating && { opacity: 0.6 }]}

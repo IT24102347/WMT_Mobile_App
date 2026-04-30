@@ -45,7 +45,7 @@ const StudentComplaintScreen = ({ navigation }) => {
 
     const handleSubmit = async () => {
         if (!subject.trim() || !message.trim()) {
-            const msg = 'Subject සහ Message ඇතුළත් කරන්න.';
+            const msg = 'Enter a Subject and Message.';
             Platform.OS === 'web' ? alert(msg) : Alert.alert('Error', msg);
             return;
         }
@@ -63,7 +63,7 @@ const StudentComplaintScreen = ({ navigation }) => {
                 setSubject('');
                 setMessage('');
                 setCategory('Other');
-                const successMsg = 'Complaint submit කළා! Admin review කරනවා. 📢';
+                const successMsg = 'Complaint submitted! Admin review in progress. 📢';
                 Platform.OS === 'web' ? alert(successMsg) : Alert.alert('Success ✅', successMsg);
                 fetchComplaints();
             } else {
@@ -187,7 +187,7 @@ const StudentComplaintScreen = ({ navigation }) => {
                             <Text style={styles.modalLabel}>Message *</Text>
                             <TextInput
                                 style={[styles.modalInput, { height: 100 }]}
-                                placeholder="ගැටළුව විස්තර කරන්න..."
+                                placeholder="Describe the problem..."
                                 value={message}
                                 onChangeText={setMessage}
                                 multiline

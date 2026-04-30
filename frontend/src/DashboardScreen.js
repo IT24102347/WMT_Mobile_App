@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'; // ✅ useCallback එක් කරන ලදී
+import React, { useState, useEffect, useRef, useCallback } from 'react'; 
 import { Platform, View, Text, StyleSheet, TouchableOpacity,
     ScrollView, Animated, Dimensions, StatusBar, Image
 } from 'react-native';
@@ -16,8 +16,7 @@ const DashboardScreen = ({ navigation, route }) => {
     const [profileImage, setProfileImage] = useState('');
     const [userRole, setUserRole] = useState('student');
 
-    // ✅ මෙහිදී useFocusEffect භාවිතා කිරීමෙන් වෙනත් screen එකක සිට (Profile) 
-    // නැවත Dashboard එකට එන සෑම විටම අලුත් දත්ත fetch වේ.
+    
     useFocusEffect(
         useCallback(() => {
             fetchProfileAndRole();
@@ -26,21 +25,21 @@ const DashboardScreen = ({ navigation, route }) => {
 
     const fetchProfileAndRole = async () => {
         try {
-            // ✅ Role load කිරීම
+            // ✅ Role load 
             const role = Platform.OS === 'web' ? localStorage.getItem('userRole') : await AsyncStorage.getItem('userRole');
             setUserRole(role || 'student');
 
             const token = Platform.OS === 'web' ? localStorage.getItem('token') : await AsyncStorage.getItem('token');
             if (!token) return;
 
-            // ✅ Header එක 'x-auth-token' ලෙස වෙනස් කරන ලදී (ඔබේ MyProfile එකේ ඇති පරිදි)
+           
             const response = await fetch(`${API_BASE}/students/profile`, {
                 headers: { 'x-auth-token': token } 
             });
 
             if (response.ok) {
                 const data = await response.json();
-                // ✅ State එක update කිරීම
+                //  State  update 
                 setStudentName(data.name || 'Student');
                 setProfileImage(data.profileImage || '');
             }
@@ -57,16 +56,16 @@ const DashboardScreen = ({ navigation, route }) => {
         ]).start();
     }, []);
 
-    // Menu items and other components (එලෙසම පවතී...)
+    
     const menuItems = [
-        { title: 'Student\nManagement', icon: '👤', member: 'Rashmi', bg: '#FF6B6B', accent: '#FF8E8E', navTo: 'MyProfile' },
+        { title: 'Student\nManagement', icon: '👤',  bg: '#FF6B6B', accent: '#FF8E8E', navTo: 'MyProfile' },
         { 
-            title: 'Room\nManagement', icon: '🏠', member: 'Samadi', bg: '#2EC4B6', accent: '#3DD9CA',
+            title: 'Room\nManagement', icon: '🏠',  bg: '#2EC4B6', accent: '#3DD9CA',
             get navTo() { return userRole === 'admin' ? 'AdminRooms' : 'StudentRooms'; }
         },
-        { title: 'Payments', icon: '💳', member: 'Neethini', bg: '#3A86FF', accent: '#5E9EFF', get navTo() { return userRole === 'admin' ? 'AdminPayments' : 'StudentPayments'; } },
-        { title: 'Room\nBooking', icon: '📅', member: 'Methsani', bg: '#8338EC', accent: '#9B59F5', get navTo() { return userRole === 'admin' ? 'AdminBookings' : 'StudentRooms'; } },
-        { title: 'Complaints', icon: '📢', member: 'Wathmini', bg: '#FB5607', accent: '#FF7C3A', get navTo() { return userRole === 'admin' ? 'AdminComplaints' : 'StudentComplaints'; } },
+        { title: 'Payments', icon: '💳',  bg: '#3A86FF', accent: '#5E9EFF', get navTo() { return userRole === 'admin' ? 'AdminPayments' : 'StudentPayments'; } },
+        { title: 'Room\nBooking', icon: '📅',  bg: '#8338EC', accent: '#9B59F5', get navTo() { return userRole === 'admin' ? 'AdminBookings' : 'StudentRooms'; } },
+        { title: 'Complaints', icon: '📢',  bg: '#FB5607', accent: '#FF7C3A', get navTo() { return userRole === 'admin' ? 'AdminComplaints' : 'StudentComplaints'; } },
     ];
 
     const stats = [
@@ -179,7 +178,7 @@ const DashboardScreen = ({ navigation, route }) => {
     );
 };
 
-// Styles (පවතින පරිදිම භාවිතා කරන්න...)
+
 const styles = StyleSheet.create({
     root: { flex: 1, backgroundColor: '#F0F2F8' },
     scroll: { flex: 1 },
