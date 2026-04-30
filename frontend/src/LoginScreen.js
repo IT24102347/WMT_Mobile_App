@@ -5,10 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
-const API_URL = Platform.OS === 'web'
-    ? 'http://localhost:5000'
-    : 'https://wmt-mobile-app-xksy.vercel.app/api';
-
+const API_URL = 'https://wmt-mobile-app-xksy.vercel.app';
 const saveToken = async (token) => {
     if (Platform.OS === 'web') {
         localStorage.setItem('token', token);
