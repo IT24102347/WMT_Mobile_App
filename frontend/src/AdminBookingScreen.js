@@ -48,7 +48,7 @@ const AdminBookingScreen = ({ navigation }) => {
     };
 
     const handleApprove = (id) => {
-        confirmAction('Approve', 'Booking approve කිරීමට විශ්වාසද?', async () => {
+        confirmAction('Approve', 'Are you sure you want to approve the booking?', async () => {
             try {
                 const token = await getToken();
                 const res = await fetch(`${API_BASE}/bookings/approve/${id}`, {
@@ -66,7 +66,7 @@ const AdminBookingScreen = ({ navigation }) => {
     };
 
     const handleReject = (id) => {
-        confirmAction('Reject', 'Booking reject කිරීමට විශ්වාසද?', async () => {
+        confirmAction('Reject', 'Are you sure you want to reject the booking?', async () => {
             try {
                 const token = await getToken();
                 const res = await fetch(`${API_BASE}/bookings/reject/${id}`, {
@@ -84,7 +84,7 @@ const AdminBookingScreen = ({ navigation }) => {
     };
 
     const handleDelete = (id) => {
-        confirmAction('Delete', 'Booking delete කිරීමට විශ්වාසද?', async () => {
+        confirmAction('Delete', 'Are you sure you want to delete the booking?', async () => {
             try {
                 const token = await getToken();
                 const res = await fetch(`${API_BASE}/bookings/${id}`, {
@@ -162,7 +162,7 @@ const AdminBookingScreen = ({ navigation }) => {
                     ListEmptyComponent={
                         <View style={styles.emptyBox}>
                             <Text style={{ fontSize: 40 }}>📋</Text>
-                            <Text style={styles.emptyText}>Bookings නැත</Text>
+                            <Text style={styles.emptyText}>No bookings available</Text>
                         </View>
                     }
                     renderItem={({ item }) => (
