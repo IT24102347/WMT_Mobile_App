@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const bookingController = require('../controllers/Bookingcontroller');
+const bookingController = require('../controllers/BookingController');
 const auth = require('../middleware/authMiddleware');
 
 // Student Routes
