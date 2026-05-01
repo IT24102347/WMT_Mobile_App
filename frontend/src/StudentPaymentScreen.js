@@ -13,6 +13,19 @@ const getToken = async () => {
     return await AsyncStorage.getItem('token');
 };
 
+// Card number formatter - XXXX XXXX XXXX XXXX
+const formatCardNumber = (val) => {
+    const digits = val.replace(/\D/g, '').slice(0, 16);
+    return digits.replace(/(.{4})/g, '$1 ').trim();
+};
+
+// Expiry formatter - MM/YY
+const formatExpiry = (val) => {
+    const digits = val.replace(/\D/g, '').slice(0, 4);
+    if (digits.length >= 3) return digits.slice(0, 2) + '/' + digits.slice(2);
+    return digits;
+};
+
 const StudentPaymentScreen = ({ navigation }) => {
     const [payments, setPayments] = useState([]);
     const [approvedBookings, setApprovedBookings] = useState([]);
@@ -24,6 +37,13 @@ const StudentPaymentScreen = ({ navigation }) => {
     const [payMethod, setPayMethod] = useState('Cash');
     const [payNote, setPayNote] = useState('');
     const [paying, setPaying] = useState(false);
+
+    // Card details state
+    const [cardNumber, setCardNumber] = useState('');
+    const [cardHolder, setCardHolder] = useState('');
+    const [cardExpiry, setCardExpiry] = useState('');
+    const [cardCVV, setCardCVV] = useState('');
+    const [cardErrors, setCardErrors] = useState({});
 
     const paymentMethods = ['Cash', 'Card', 'Bank Transfer', 'Online'];
 
@@ -69,7 +89,35 @@ const StudentPaymentScreen = ({ navigation }) => {
         setPayMonth(`${now.getFullYear()}-${mm}`);
         setPayMethod('Cash');
         setPayNote('');
+        setCardNumber('');
+        setCardHolder('');
+        setCardExpiry('');
+        setCardCVV('');
+        setCardErrors({});
         setPayModal(true);
+    };
+
+    // Validate card details
+    const validateCard = () => {
+        const errors = {};
+        const rawCard = cardNumber.replace(/\s/g, '');
+        if (rawCard.length !== 16) errors.cardNumber = 'Card number must be 16 digits';
+        if (!cardHolder.trim()) errors.cardHolder = 'Cardholder name is required';
+        const expiryMatch = cardExpiry.match(/^(\d{2})\/(\d{2})$/);
+        if (!expiryMatch) {
+            errors.cardExpiry = 'Enter valid expiry (MM/YY)';
+        } else {
+            const month = parseInt(expiryMatch[1]);
+            const year = parseInt('20' + expiryMatch[2]);
+            const now = new Date();
+            if (month < 1 || month > 12) errors.cardExpiry = 'Invalid month';
+            else if (year < now.getFullYear() || (year === now.getFullYear() && month < now.getMonth() + 1)) {
+                errors.cardExpiry = 'Card has expired';
+            }
+        }
+        if (cardCVV.length < 3 || cardCVV.length > 4) errors.cardCVV = 'CVV must be 3 or 4 digits';
+        setCardErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
     const handlePay = async () => {
@@ -78,6 +126,12 @@ const StudentPaymentScreen = ({ navigation }) => {
             Platform.OS === 'web' ? alert(msg) : Alert.alert('Error', msg);
             return;
         }
+
+        // Validate card if Card method selected
+        if (payMethod === 'Card') {
+            if (!validateCard()) return;
+        }
+
         setPaying(true);
         try {
             const token = await getToken();
@@ -125,6 +179,14 @@ const StudentPaymentScreen = ({ navigation }) => {
         if (s === 'Paid') return '#10b981';
         if (s === 'Overdue') return '#ef4444';
         return '#f59e0b';
+    };
+
+    const getCardType = () => {
+        const num = cardNumber.replace(/\s/g, '');
+        if (num.startsWith('4')) return '💳 Visa';
+        if (num.startsWith('5')) return '💳 Mastercard';
+        if (num.startsWith('3')) return '💳 Amex';
+        return '💳 Card';
     };
 
     const totalDue = payments.filter(p => p.status !== 'Paid').reduce((sum, p) => sum + p.amount, 0);
@@ -213,66 +275,133 @@ const StudentPaymentScreen = ({ navigation }) => {
                 />
             )}
 
+            {/* ═══════════════ PAYMENT MODAL ═══════════════ */}
             <Modal visible={payModal} transparent animationType="slide">
                 <View style={styles.modalBg}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>💳 Payment Submit</Text>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 30 }}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalTitle}>💳 Payment Submit</Text>
 
-                        {selectedBooking && (
-                            <View style={styles.modalInfo}>
-                                <Text style={styles.modalInfoText}>
-                                    🏠 Room {selectedBooking.room?.roomNumber} - {selectedBooking.room?.roomType}
-                                </Text>
-                                <Text style={[styles.modalInfoText, { color: '#10b981', fontWeight: '800', fontSize: 16 }]}>
-                                    Rs. {selectedBooking.room?.pricePerMonth?.toLocaleString()}
-                                </Text>
-                            </View>
-                        )}
-
-                        <Text style={styles.modalLabel}>Month (YYYY-MM)</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            placeholder="e.g. 2026-05"
-                            value={payMonth}
-                            onChangeText={setPayMonth}
-                        />
-
-                        <Text style={styles.modalLabel}>Payment Method</Text>
-                        <View style={styles.methodRow}>
-                            {paymentMethods.map(m => (
-                                <TouchableOpacity
-                                    key={m}
-                                    style={[styles.methodBtn, payMethod === m && styles.methodBtnActive]}
-                                    onPress={() => setPayMethod(m)}>
-                                    <Text style={[styles.methodBtnText, payMethod === m && { color: '#fff' }]}>
-                                        {m}
+                            {selectedBooking && (
+                                <View style={styles.modalInfo}>
+                                    <Text style={styles.modalInfoText}>
+                                        🏠 Room {selectedBooking.room?.roomNumber} - {selectedBooking.room?.roomType}
                                     </Text>
-                                </TouchableOpacity>
-                            ))}
+                                    <Text style={[styles.modalInfoText, { color: '#10b981', fontWeight: '800', fontSize: 16 }]}>
+                                        Rs. {selectedBooking.room?.pricePerMonth?.toLocaleString()}
+                                    </Text>
+                                </View>
+                            )}
+
+                            <Text style={styles.modalLabel}>Month (YYYY-MM)</Text>
+                            <TextInput
+                                style={styles.modalInput}
+                                placeholder="e.g. 2026-05"
+                                value={payMonth}
+                                onChangeText={setPayMonth}
+                            />
+
+                            {/* Payment Method */}
+                            <Text style={styles.modalLabel}>Payment Method</Text>
+                            <View style={styles.methodRow}>
+                                {paymentMethods.map(m => (
+                                    <TouchableOpacity
+                                        key={m}
+                                        style={[styles.methodBtn, payMethod === m && styles.methodBtnActive]}
+                                        onPress={() => { setPayMethod(m); setCardErrors({}); }}>
+                                        <Text style={[styles.methodBtnText, payMethod === m && { color: '#fff' }]}>
+                                            {m === 'Card' ? '💳 ' : ''}{m}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+
+                            {/* ═══ CARD DETAILS SECTION ═══ */}
+                            {payMethod === 'Card' && (
+                                <View style={styles.cardSection}>
+                                    <Text style={styles.cardSectionTitle}>🔒 Card Details</Text>
+
+                                    {/* Card Number */}
+                                    <Text style={styles.modalLabel}>
+                                        Card Number {cardNumber.replace(/\s/g, '').length > 0 ? getCardType() : ''}
+                                    </Text>
+                                    <TextInput
+                                        style={[styles.modalInput, styles.cardInput, cardErrors.cardNumber && styles.inputError]}
+                                        placeholder="1234 5678 9012 3456"
+                                        value={cardNumber}
+                                        onChangeText={v => setCardNumber(formatCardNumber(v))}
+                                        keyboardType="numeric"
+                                        maxLength={19}
+                                    />
+                                    {cardErrors.cardNumber && <Text style={styles.errorText}>⚠ {cardErrors.cardNumber}</Text>}
+
+                                    {/* Cardholder Name */}
+                                    <Text style={styles.modalLabel}>Cardholder Name</Text>
+                                    <TextInput
+                                        style={[styles.modalInput, styles.cardInput, cardErrors.cardHolder && styles.inputError]}
+                                        placeholder="JOHN DOE"
+                                        value={cardHolder}
+                                        onChangeText={v => setCardHolder(v.toUpperCase())}
+                                        autoCapitalize="characters"
+                                    />
+                                    {cardErrors.cardHolder && <Text style={styles.errorText}>⚠ {cardErrors.cardHolder}</Text>}
+
+                                    {/* Expiry + CVV row */}
+                                    <View style={styles.cardRowInputs}>
+                                        <View style={{ flex: 1, marginRight: 8 }}>
+                                            <Text style={styles.modalLabel}>Expiry Date</Text>
+                                            <TextInput
+                                                style={[styles.modalInput, styles.cardInput, cardErrors.cardExpiry && styles.inputError]}
+                                                placeholder="MM/YY"
+                                                value={cardExpiry}
+                                                onChangeText={v => setCardExpiry(formatExpiry(v))}
+                                                keyboardType="numeric"
+                                                maxLength={5}
+                                            />
+                                            {cardErrors.cardExpiry && <Text style={styles.errorText}>⚠ {cardErrors.cardExpiry}</Text>}
+                                        </View>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={styles.modalLabel}>CVV</Text>
+                                            <TextInput
+                                                style={[styles.modalInput, styles.cardInput, cardErrors.cardCVV && styles.inputError]}
+                                                placeholder="123"
+                                                value={cardCVV}
+                                                onChangeText={v => setCardCVV(v.replace(/\D/g, '').slice(0, 4))}
+                                                keyboardType="numeric"
+                                                maxLength={4}
+                                                secureTextEntry
+                                            />
+                                            {cardErrors.cardCVV && <Text style={styles.errorText}>⚠ {cardErrors.cardCVV}</Text>}
+                                        </View>
+                                    </View>
+
+                                    <Text style={styles.secureNote}>🔒 Your card details are secure and encrypted</Text>
+                                </View>
+                            )}
+
+                            <Text style={styles.modalLabel}>Note (optional)</Text>
+                            <TextInput
+                                style={[styles.modalInput, { height: 70 }]}
+                                placeholder="Any note..."
+                                value={payNote}
+                                onChangeText={setPayNote}
+                                multiline
+                            />
+
+                            <TouchableOpacity
+                                style={[styles.submitBtn, paying && { opacity: 0.6 }]}
+                                onPress={handlePay}
+                                disabled={paying}>
+                                <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>
+                                    {paying ? 'Processing...' : payMethod === 'Card' ? '🔒 Pay Securely' : '✅ Submit Payment'}
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => setPayModal(false)} style={{ marginTop: 12 }}>
+                                <Text style={{ textAlign: 'center', color: '#ef4444', fontWeight: '700' }}>Cancel</Text>
+                            </TouchableOpacity>
                         </View>
-
-                        <Text style={styles.modalLabel}>Note (optional)</Text>
-                        <TextInput
-                            style={[styles.modalInput, { height: 70 }]}
-                            placeholder="Any note..."
-                            value={payNote}
-                            onChangeText={setPayNote}
-                            multiline
-                        />
-
-                        <TouchableOpacity
-                            style={[styles.submitBtn, paying && { opacity: 0.6 }]}
-                            onPress={handlePay}
-                            disabled={paying}>
-                            <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>
-                                {paying ? 'Submitting...' : '✅ Submit Payment'}
-                            </Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress={() => setPayModal(false)} style={{ marginTop: 12 }}>
-                            <Text style={{ textAlign: 'center', color: '#ef4444', fontWeight: '700' }}>Cancel</Text>
-                        </TouchableOpacity>
-                    </View>
+                    </ScrollView>
                 </View>
             </Modal>
         </View>
@@ -313,7 +442,7 @@ const styles = StyleSheet.create({
     amount: { fontSize: 22, fontWeight: '800', color: '#064e3b', marginBottom: 6 },
     detail: { color: '#666', fontSize: 13, marginBottom: 3 },
     dateText: { color: '#aaa', fontSize: 12, marginTop: 6 },
-    modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' },
+    modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' },
     modalContent: { width: '90%', backgroundColor: '#fff', padding: 24, borderRadius: 25 },
     modalTitle: { fontSize: 18, fontWeight: '800', marginBottom: 14, textAlign: 'center', color: '#064e3b' },
     modalInfo: { backgroundColor: '#f0fdf4', borderRadius: 12, padding: 12, marginBottom: 14 },
@@ -325,6 +454,18 @@ const styles = StyleSheet.create({
     methodBtnActive: { backgroundColor: '#10b981', borderColor: '#10b981' },
     methodBtnText: { fontSize: 12, fontWeight: '600', color: '#444' },
     submitBtn: { backgroundColor: '#10b981', padding: 16, borderRadius: 14, alignItems: 'center' },
+
+    // Card section styles
+    cardSection: {
+        backgroundColor: '#f8faff', borderRadius: 16, padding: 16,
+        marginBottom: 14, borderWidth: 1.5, borderColor: '#c7d8f0'
+    },
+    cardSectionTitle: { fontSize: 14, fontWeight: '800', color: '#1a3c5e', marginBottom: 12, textAlign: 'center' },
+    cardInput: { backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#d0ddef', fontSize: 15, letterSpacing: 1 },
+    inputError: { borderColor: '#ef4444', backgroundColor: '#fff5f5' },
+    errorText: { color: '#ef4444', fontSize: 11, marginTop: -8, marginBottom: 8, marginLeft: 4 },
+    cardRowInputs: { flexDirection: 'row' },
+    secureNote: { fontSize: 11, color: '#6b8aad', textAlign: 'center', marginTop: 6, fontStyle: 'italic' },
 });
 
 export default StudentPaymentScreen;
