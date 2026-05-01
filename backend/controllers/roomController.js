@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+// Room controller
+>>>>>>> 4df35ae9 (added by room management)
 const Room = require('../models/Room');
 
 // 1. Create Room (Admin only)

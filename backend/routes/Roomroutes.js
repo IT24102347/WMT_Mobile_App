@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+// Room routes
+>>>>>>> 4df35ae9 (added by room management)
 const express = require('express');
 const router = express.Router();
 const roomController = require('../controllers/roomController');
