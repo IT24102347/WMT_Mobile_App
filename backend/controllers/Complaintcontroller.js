@@ -1,6 +1,10 @@
 const Complaint = require('../models/Complaint');
 
+<<<<<<< HEAD
 // 1.Student: Submit Complaint
+=======
+// 1. Student: Submit Complaint
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
 exports.createComplaint = async (req, res) => {
     try {
         const { subject, message, category } = req.body;
@@ -24,7 +28,11 @@ exports.createComplaint = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 // 2.Student: Get My Complaints
+=======
+// 2. Student: Get My Complaints
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
 exports.getMyComplaints = async (req, res) => {
     try {
         const complaints = await Complaint.find({ student: req.user.id })
@@ -35,7 +43,11 @@ exports.getMyComplaints = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 // 3.Admin: Get All Complaints
+=======
+// 3. Admin: Get All Complaints
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
 exports.getAllComplaints = async (req, res) => {
     try {
         const complaints = await Complaint.find()
@@ -47,7 +59,11 @@ exports.getAllComplaints = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 // 4.Admin: Update complaint status + reply
+=======
+// 4. Admin: Update complaint status + reply
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
 exports.updateComplaint = async (req, res) => {
     try {
         const { status, adminReply } = req.body;
@@ -68,7 +84,11 @@ exports.updateComplaint = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 // 5.Admin: Delete complaint
+=======
+// 5. Admin: Delete complaint
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
 exports.deleteComplaint = async (req, res) => {
     try {
         await Complaint.findByIdAndDelete(req.params.id);

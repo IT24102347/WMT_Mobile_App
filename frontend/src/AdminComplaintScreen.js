@@ -13,7 +13,10 @@ const getToken = async () => {
     return await AsyncStorage.getItem('token');
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
 const AdminComplaintScreen = ({ navigation }) => {
     const [complaints, setComplaints] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -45,7 +48,10 @@ const AdminComplaintScreen = ({ navigation }) => {
         }
     };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
     const openReply = (complaint) => {
         setSelected(complaint);
         setReplyText(complaint.adminReply || '');
@@ -53,7 +59,10 @@ const AdminComplaintScreen = ({ navigation }) => {
         setReplyModal(true);
     };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
     const handleUpdate = async () => {
         setUpdating(true);
         try {
@@ -74,7 +83,10 @@ const AdminComplaintScreen = ({ navigation }) => {
         }
     };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
     const handleDelete = (id) => {
         const doDelete = async () => {
             const token = await getToken();
@@ -91,14 +103,20 @@ const AdminComplaintScreen = ({ navigation }) => {
         }
     };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
     const statusColor = (s) => {
         if (s === 'Resolved') return '#10b981';
         if (s === 'In Progress') return '#3A86FF';
         return '#f59e0b';
     };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
     const filtered = filter === 'All' ? complaints : complaints.filter(c => c.status === filter);
     const pendingCount = complaints.filter(c => c.status === 'Pending').length;
     const inProgressCount = complaints.filter(c => c.status === 'In Progress').length;
@@ -247,7 +265,10 @@ const AdminComplaintScreen = ({ navigation }) => {
     );
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#fff5f0' },
     header: {
@@ -296,5 +317,8 @@ const styles = StyleSheet.create({
     updateBtn: { backgroundColor: '#FB5607', padding: 16, borderRadius: 14, alignItems: 'center' },
 });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
 export default AdminComplaintScreen;
