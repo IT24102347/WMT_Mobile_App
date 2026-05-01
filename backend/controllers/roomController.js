@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
-// Room controller
->>>>>>> 4df35ae9 (added by room management)
+//Room Booking Module IT24102938
 const Room = require('../models/Room');
 
 // 1. Create Room (Admin only)
