@@ -1,7 +1,9 @@
-<<<<<<< HEAD
-=======
-// Room routes
->>>>>>> 4df35ae9 (added by room management)
+// ============================================================
+// Roomroutes.js - Express Router
+// This route file was created by Room Booking Module
+// Handles all room management API endpoints
+// Part of: Room Booking Management Feature
+// ============================================================
 const express = require('express');
 const router = express.Router();
 const roomController = require('../controllers/roomController');
