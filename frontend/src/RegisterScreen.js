@@ -5,9 +5,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 
-const API_URL = Platform.OS === 'web'
-    ? 'http://localhost:5000'
-    : 'https://wmt-mobile-app-xksy.vercel.app/api';
+const API_URL = 'https://wmt-mobile-app-xksy.vercel.app';
 
 const RegisterScreen = ({ navigation }) => {
     const [name, setName] = useState('');
