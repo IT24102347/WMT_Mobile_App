@@ -5,7 +5,6 @@ const router = express.Router();
 const complaintController = require('../controllers/Complaintcontroller');
 const auth = require('../middleware/authMiddleware');
 
-
 // Student  Routes
 router.post('/', auth, complaintController.createComplaint);
 router.get('/my', auth, complaintController.getMyComplaints);
