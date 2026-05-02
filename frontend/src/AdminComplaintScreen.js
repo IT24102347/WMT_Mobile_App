@@ -1,3 +1,4 @@
+
 //Admin - complaint screen
 
 import React, { useState, useEffect } from 'react';
@@ -12,8 +13,7 @@ const API_BASE = 'https://wmt-mobile-app-xksy.vercel.app/api';
 
 const getToken = async () => {
     if (Platform.OS === 'web') return localStorage.getItem('token');
-    return await AsyncStora
-    ge.getItem('token');
+
 };
 
 const AdminComplaintScreen = ({ navigation }) => {
@@ -48,12 +48,14 @@ const AdminComplaintScreen = ({ navigation }) => {
     };
 
 
+
     const openReply = (complaint) => {
         setSelected(complaint);
         setReplyText(complaint.adminReply || '');
         setNewStatus(complaint.status);
         setReplyModal(true);
     };
+
 
 
     const handleUpdate = async () => {
@@ -297,6 +299,5 @@ const styles = StyleSheet.create({
     statusBtnText: { fontSize: 12, fontWeight: '600', color: '#444' },
     updateBtn: { backgroundColor: '#FB5607', padding: 16, borderRadius: 14, alignItems: 'center' },
 });
-
 
 export default AdminComplaintScreen;

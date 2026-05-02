@@ -1,6 +1,10 @@
 const Complaint = require('../models/Complaint');
 
+<<<<<<< HEAD
 // 1.Student: Submit Complaint.
+=======
+// 1. Student: Submit Complaint
+>>>>>>> 7a4d3308 (added by payment changes)
 exports.createComplaint = async (req, res) => {
     try {
         const { subject, message, category } = req.body;
@@ -24,8 +28,12 @@ exports.createComplaint = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 
 // 2.Student: Get My Complaints.   
+=======
+// 2. Student: Get My Complaints
+>>>>>>> 7a4d3308 (added by payment changes)
 exports.getMyComplaints = async (req, res) => {
     try {
         const complaints = await Complaint.find({ student: req.user.id })
@@ -36,8 +44,12 @@ exports.getMyComplaints = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 
 // 3.Admin: Get All Complaints.
+=======
+// 3. Admin: Get All Complaints
+>>>>>>> 7a4d3308 (added by payment changes)
 exports.getAllComplaints = async (req, res) => {
     try {
         const complaints = await Complaint.find()
@@ -49,8 +61,12 @@ exports.getAllComplaints = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 
 // 4.Admin: Update complaint status + reply.
+=======
+// 4. Admin: Update complaint status + reply
+>>>>>>> 7a4d3308 (added by payment changes)
 exports.updateComplaint = async (req, res) => {
     try {
         const { status, adminReply } = req.body;
@@ -71,8 +87,12 @@ exports.updateComplaint = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 
 // 5.Admin: Delete complaint.
+=======
+// 5. Admin: Delete complaint
+>>>>>>> 7a4d3308 (added by payment changes)
 exports.deleteComplaint = async (req, res) => {
     try {
         await Complaint.findByIdAndDelete(req.params.id);
@@ -80,5 +100,9 @@ exports.deleteComplaint = async (req, res) => {
     } catch (err) {
         res.status(500).json({ msg: 'Server Error' });
     }
+<<<<<<< HEAD
 };
 
+=======
+};
+>>>>>>> 7a4d3308 (added by payment changes)

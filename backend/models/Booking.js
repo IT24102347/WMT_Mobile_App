@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 //Room Booking Module IT24102938
+=======
+>>>>>>> 7a4d3308 (added by payment changes)
 const mongoose = require('mongoose');
 
 const BookingSchema = new mongoose.Schema({

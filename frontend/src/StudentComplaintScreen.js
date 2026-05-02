@@ -1,5 +1,7 @@
+
 // src/StudentComplaintScreen.js
 
+a4d3308 (added by payment changes)
 import React, { useState, useEffect } from 'react';
 import {
     View, Text, StyleSheet, FlatList, TouchableOpacity,
@@ -15,7 +17,10 @@ const getToken = async () => {
     return await AsyncStorage.getItem('token');
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7a4d3308 (added by payment changes)
 const StudentComplaintScreen = ({ navigation }) => {
     const [complaints, setComplaints] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -46,7 +51,10 @@ const StudentComplaintScreen = ({ navigation }) => {
         }
     };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7a4d3308 (added by payment changes)
     const handleSubmit = async () => {
         if (!subject.trim() || !message.trim()) {
             const msg = 'Enter a Subject and Message.';
@@ -82,7 +90,10 @@ const StudentComplaintScreen = ({ navigation }) => {
         }
     };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7a4d3308 (added by payment changes)
     const statusColor = (s) => {
         if (s === 'Resolved') return '#10b981';
         if (s === 'In Progress') return '#3A86FF';
@@ -95,7 +106,10 @@ const StudentComplaintScreen = ({ navigation }) => {
         return '⏳';
     };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7a4d3308 (added by payment changes)
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -223,7 +237,10 @@ const StudentComplaintScreen = ({ navigation }) => {
     );
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7a4d3308 (added by payment changes)
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#fff5f0' },
     header: {
@@ -264,5 +281,9 @@ const styles = StyleSheet.create({
     submitBtn: { backgroundColor: '#FB5607', padding: 16, borderRadius: 14, alignItems: 'center' },
 });
 
+<<<<<<< HEAD
 
 export default StudentComplaintScreen;
+=======
+export default StudentComplaintScreen;
+>>>>>>> 7a4d3308 (added by payment changes)
