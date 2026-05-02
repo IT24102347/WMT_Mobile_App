@@ -14,9 +14,12 @@ const getToken = async () => {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
+=======
+>>>>>>> 4df35ae9 (added by room management)
 const StudentComplaintScreen = ({ navigation }) => {
     const [complaints, setComplaints] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -48,9 +51,12 @@ const StudentComplaintScreen = ({ navigation }) => {
     };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
+=======
+>>>>>>> 4df35ae9 (added by room management)
     const handleSubmit = async () => {
         if (!subject.trim() || !message.trim()) {
             const msg = 'Enter a Subject and Message.';
@@ -87,9 +93,12 @@ const StudentComplaintScreen = ({ navigation }) => {
     };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
+=======
+>>>>>>> 4df35ae9 (added by room management)
     const statusColor = (s) => {
         if (s === 'Resolved') return '#10b981';
         if (s === 'In Progress') return '#3A86FF';
@@ -103,9 +112,12 @@ const StudentComplaintScreen = ({ navigation }) => {
     };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
+=======
+>>>>>>> 4df35ae9 (added by room management)
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -234,9 +246,12 @@ const StudentComplaintScreen = ({ navigation }) => {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
+=======
+>>>>>>> 4df35ae9 (added by room management)
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#fff5f0' },
     header: {
@@ -278,7 +293,10 @@ const styles = StyleSheet.create({
 });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> bd3b878c5dfc98d0144a091bd4021e74eaff1ccb
+=======
+>>>>>>> 4df35ae9 (added by room management)
 export default StudentComplaintScreen;
