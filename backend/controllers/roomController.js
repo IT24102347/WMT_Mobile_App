@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-//Room Booking Module IT24102938
-=======
->>>>>>> 7a4d3308 (added by payment changes)
+// Room management
 const Room = require('../models/Room');
 
 // 1. Create Room (Admin only)
