@@ -5,10 +5,10 @@ import {
     TextInput, ScrollView, Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const API_BASE = 'https://wmt-mobile-app-xksy.vercel.app/api';
 
-// Token එක ලබාගැනීමේ function එක නිවැරදි කර ඇත
 const getToken = async () => {
     try {
         if (Platform.OS === 'web') return localStorage.getItem('token');
@@ -32,40 +32,27 @@ const AdminComplaintScreen = ({ navigation }) => {
 
     const statuses = ['Pending', 'In Progress', 'Resolved'];
 
-    useEffect(() => { 
-        fetchComplaints(); 
+    useEffect(() => {
+        fetchComplaints();
     }, []);
 
     const fetchComplaints = async () => {
         try {
             setLoading(true);
             const token = await getToken();
-            
             if (!token) {
-                console.error("No token found");
+                console.error('No token found');
                 setLoading(false);
                 return;
             }
-
-            const res = await fetch(`${API_BASE}/complaints`, {
-                method: 'GET',
-                headers: { 
-                    'x-auth-token': token,
-                    'Content-Type': 'application/json'
-                }
+            const res = await axios.get(`${API_BASE}/complaints`, {
+                headers: { 'x-auth-token': token }
             });
-
-            const data = await res.json();
-            
-            if (res.ok) {
-                setComplaints(Array.isArray(data) ? data : []);
-            } else {
-                console.error('API Error:', data.msg);
-            }
+            setComplaints(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.error('Fetch complaints error:', err);
-            // Error එක screen එකේ පෙන්වීමට
-            Platform.OS === 'web' ? alert("Error: " + err.message) : Alert.alert('Error', err.message);
+            const msg = err?.response?.data?.msg || err.message || 'Error fetching complaints';
+            Platform.OS === 'web' ? alert(msg) : Alert.alert('Error', msg);
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -77,23 +64,19 @@ const AdminComplaintScreen = ({ navigation }) => {
         setUpdating(true);
         try {
             const token = await getToken();
-            const res = await fetch(`${API_BASE}/complaints/${selected._id}`, {
-                method: 'PUT',
-                headers: { 
-                    'Content-Type': 'application/json', 
-                    'x-auth-token': token 
-                },
-                body: JSON.stringify({ status: newStatus, adminReply: replyText })
-            });
-
-            if (res.ok) {
-                setReplyModal(false);
-                const msg = 'Complaint updated! ✅';
-                Platform.OS === 'web' ? alert(msg) : Alert.alert('Success', msg);
-                fetchComplaints();
-            }
+            await axios.put(
+                `${API_BASE}/complaints/${selected._id}`,
+                { status: newStatus, adminReply: replyText },
+                { headers: { 'x-auth-token': token } }
+            );
+            setReplyModal(false);
+            const msg = 'Complaint updated! ✅';
+            Platform.OS === 'web' ? alert(msg) : Alert.alert('Success', msg);
+            fetchComplaints();
         } catch (err) {
             console.error('Update error:', err);
+            const msg = err?.response?.data?.msg || 'Update failed';
+            Platform.OS === 'web' ? alert(msg) : Alert.alert('Error', msg);
         } finally {
             setUpdating(false);
         }
@@ -110,9 +93,8 @@ const AdminComplaintScreen = ({ navigation }) => {
         const doDelete = async () => {
             try {
                 const token = await getToken();
-                await fetch(`${API_BASE}/complaints/${id}`, { 
-                    method: 'DELETE', 
-                    headers: { 'x-auth-token': token } 
+                await axios.delete(`${API_BASE}/complaints/${id}`, {
+                    headers: { 'x-auth-token': token }
                 });
                 fetchComplaints();
             } catch (err) {
@@ -148,7 +130,6 @@ const AdminComplaintScreen = ({ navigation }) => {
                 <View style={{ width: 50 }} />
             </View>
 
-            {/* Stats Row */}
             <View style={styles.statsRow}>
                 <View style={[styles.stat, { backgroundColor: '#f59e0b' }]}>
                     <Text style={styles.statNum}>{complaints.filter(c => c.status === 'Pending').length}</Text>
@@ -207,12 +188,11 @@ const AdminComplaintScreen = ({ navigation }) => {
                             <Text style={styles.messageText}>{item.message}</Text>
                             {item.adminReply ? (
                                 <View style={styles.replyBox}>
-                                    <Text style={styles.replyLabel}>💬 Your Reply:</Text>
+                                    <Text style={styles.replyLabel}>💬 Admin Reply:</Text>
                                     <Text style={styles.replyText}>{item.adminReply}</Text>
                                 </View>
                             ) : null}
                             <Text style={styles.dateText}>{new Date(item.createdAt).toLocaleDateString()}</Text>
-
                             <View style={styles.actionRow}>
                                 <TouchableOpacity
                                     style={[styles.actionBtn, { backgroundColor: '#3A86FF' }]}
@@ -230,7 +210,6 @@ const AdminComplaintScreen = ({ navigation }) => {
                 />
             )}
 
-            {/* Reply Modal */}
             <Modal visible={replyModal} transparent animationType="slide">
                 <View style={styles.modalBg}>
                     <View style={styles.modalContent}>
@@ -272,7 +251,6 @@ const AdminComplaintScreen = ({ navigation }) => {
     );
 };
 
-// Styles remain same as your original code
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#fff5f0' },
     header: {
