@@ -4,15 +4,18 @@ import {
     ActivityIndicator, Platform, RefreshControl, Modal,
     TextInput, ScrollView, Alert
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const API_BASE = 'https://wmt-mobile-app-xksy.vercel.app/api';
 
 const getToken = async () => {
     try {
-        if (Platform.OS === 'web') return localStorage.getItem('token');
-        return await AsyncStorage.getItem('token');
+        if (Platform.OS === 'web') {
+            return localStorage.getItem('token');
+        } else {
+            const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+            return await AsyncStorage.getItem('token');
+        }
     } catch (err) {
         console.error('getToken error:', err);
         return null;
@@ -101,7 +104,6 @@ const AdminComplaintScreen = ({ navigation }) => {
                 console.error('Delete error:', err);
             }
         };
-
         if (Platform.OS === 'web') {
             if (window.confirm('Delete this complaint?')) doDelete();
         } else {
@@ -173,7 +175,7 @@ const AdminComplaintScreen = ({ navigation }) => {
                         <View style={styles.card}>
                             <View style={styles.cardTop}>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={styles.studentName}>👤 {item.student?.name || 'Unknown User'}</Text>
+                                    <Text style={styles.studentName}>👤 {item.student?.name || 'Unknown'}</Text>
                                     <Text style={styles.studentId}>🪪 {item.student?.studentId || 'N/A'}</Text>
                                 </View>
                                 <View style={[styles.statusBadge, { backgroundColor: statusColor(item.status) }]}>
