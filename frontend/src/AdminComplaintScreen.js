@@ -1,5 +1,3 @@
-//Admin - complaint screen
-
 import React, { useState, useEffect } from 'react';
 import {
     View, Text, StyleSheet, FlatList, TouchableOpacity,
@@ -10,10 +8,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_BASE = 'https://wmt-mobile-app-xksy.vercel.app/api';
 
+// Token එක ලබාගැනීමේ function එක නිවැරදි කර ඇත
 const getToken = async () => {
-    if (Platform.OS === 'web') return localStorage.getItem('token');
-    return await AsyncStora
-    ge.getItem('token');
+    try {
+        if (Platform.OS === 'web') return localStorage.getItem('token');
+        return await AsyncStorage.getItem('token');
+    } catch (err) {
+        console.error('getToken error:', err);
+        return null;
+    }
 };
 
 const AdminComplaintScreen = ({ navigation }) => {
@@ -29,24 +32,72 @@ const AdminComplaintScreen = ({ navigation }) => {
 
     const statuses = ['Pending', 'In Progress', 'Resolved'];
 
-    useEffect(() => { fetchComplaints(); }, []);
+    useEffect(() => { 
+        fetchComplaints(); 
+    }, []);
 
     const fetchComplaints = async () => {
         try {
+            setLoading(true);
             const token = await getToken();
+            
+            if (!token) {
+                console.error("No token found");
+                setLoading(false);
+                return;
+            }
+
             const res = await fetch(`${API_BASE}/complaints`, {
-                headers: { 'x-auth-token': token }
+                method: 'GET',
+                headers: { 
+                    'x-auth-token': token,
+                    'Content-Type': 'application/json'
+                }
             });
+
             const data = await res.json();
-            setComplaints(Array.isArray(data) ? data : []);
+            
+            if (res.ok) {
+                setComplaints(Array.isArray(data) ? data : []);
+            } else {
+                console.error('API Error:', data.msg);
+            }
         } catch (err) {
             console.error('Fetch complaints error:', err);
+            // Error එක screen එකේ පෙන්වීමට
+            Platform.OS === 'web' ? alert("Error: " + err.message) : Alert.alert('Error', err.message);
         } finally {
             setLoading(false);
             setRefreshing(false);
         }
     };
 
+    const handleUpdate = async () => {
+        if (!selected) return;
+        setUpdating(true);
+        try {
+            const token = await getToken();
+            const res = await fetch(`${API_BASE}/complaints/${selected._id}`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'x-auth-token': token 
+                },
+                body: JSON.stringify({ status: newStatus, adminReply: replyText })
+            });
+
+            if (res.ok) {
+                setReplyModal(false);
+                const msg = 'Complaint updated! ✅';
+                Platform.OS === 'web' ? alert(msg) : Alert.alert('Success', msg);
+                fetchComplaints();
+            }
+        } catch (err) {
+            console.error('Update error:', err);
+        } finally {
+            setUpdating(false);
+        }
+    };
 
     const openReply = (complaint) => {
         setSelected(complaint);
@@ -55,33 +106,18 @@ const AdminComplaintScreen = ({ navigation }) => {
         setReplyModal(true);
     };
 
-
-    const handleUpdate = async () => {
-        setUpdating(true);
-        try {
-            const token = await getToken();
-            const res = await fetch(`${API_BASE}/complaints/${selected._id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-                body: JSON.stringify({ status: newStatus, adminReply: replyText })
-            });
-            if (res.ok) {
-                setReplyModal(false);
-                const msg = 'Complaint updated! ✅';
-                Platform.OS === 'web' ? alert(msg) : Alert.alert('Success', msg);
-                fetchComplaints();
-            }
-        } catch { } finally {
-            setUpdating(false);
-        }
-    };
-
-
     const handleDelete = (id) => {
         const doDelete = async () => {
-            const token = await getToken();
-            await fetch(`${API_BASE}/complaints/${id}`, { method: 'DELETE', headers: { 'x-auth-token': token } });
-            fetchComplaints();
+            try {
+                const token = await getToken();
+                await fetch(`${API_BASE}/complaints/${id}`, { 
+                    method: 'DELETE', 
+                    headers: { 'x-auth-token': token } 
+                });
+                fetchComplaints();
+            } catch (err) {
+                console.error('Delete error:', err);
+            }
         };
 
         if (Platform.OS === 'web') {
@@ -94,7 +130,6 @@ const AdminComplaintScreen = ({ navigation }) => {
         }
     };
 
-
     const statusColor = (s) => {
         if (s === 'Resolved') return '#10b981';
         if (s === 'In Progress') return '#3A86FF';
@@ -102,9 +137,6 @@ const AdminComplaintScreen = ({ navigation }) => {
     };
 
     const filtered = filter === 'All' ? complaints : complaints.filter(c => c.status === filter);
-    const pendingCount = complaints.filter(c => c.status === 'Pending').length;
-    const inProgressCount = complaints.filter(c => c.status === 'In Progress').length;
-    const resolvedCount = complaints.filter(c => c.status === 'Resolved').length;
 
     return (
         <View style={styles.container}>
@@ -112,21 +144,22 @@ const AdminComplaintScreen = ({ navigation }) => {
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Text style={styles.backText}>← Back</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>📢 Complaints</Text>
-                <Text style={{ width: 50 }} />
+                <Text style={styles.headerTitle}>📢 Complaints Admin</Text>
+                <View style={{ width: 50 }} />
             </View>
 
+            {/* Stats Row */}
             <View style={styles.statsRow}>
                 <View style={[styles.stat, { backgroundColor: '#f59e0b' }]}>
-                    <Text style={styles.statNum}>{pendingCount}</Text>
+                    <Text style={styles.statNum}>{complaints.filter(c => c.status === 'Pending').length}</Text>
                     <Text style={styles.statLab}>Pending</Text>
                 </View>
                 <View style={[styles.stat, { backgroundColor: '#3A86FF' }]}>
-                    <Text style={styles.statNum}>{inProgressCount}</Text>
+                    <Text style={styles.statNum}>{complaints.filter(c => c.status === 'In Progress').length}</Text>
                     <Text style={styles.statLab}>In Progress</Text>
                 </View>
                 <View style={[styles.stat, { backgroundColor: '#10b981' }]}>
-                    <Text style={styles.statNum}>{resolvedCount}</Text>
+                    <Text style={styles.statNum}>{complaints.filter(c => c.status === 'Resolved').length}</Text>
                     <Text style={styles.statLab}>Resolved</Text>
                 </View>
             </View>
@@ -159,8 +192,8 @@ const AdminComplaintScreen = ({ navigation }) => {
                         <View style={styles.card}>
                             <View style={styles.cardTop}>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={styles.studentName}>👤 {item.student?.name || 'Unknown'}</Text>
-                                    <Text style={styles.studentId}>🪪 {item.student?.studentId}</Text>
+                                    <Text style={styles.studentName}>👤 {item.student?.name || 'Unknown User'}</Text>
+                                    <Text style={styles.studentId}>🪪 {item.student?.studentId || 'N/A'}</Text>
                                 </View>
                                 <View style={[styles.statusBadge, { backgroundColor: statusColor(item.status) }]}>
                                     <Text style={styles.statusText}>{item.status}</Text>
@@ -184,7 +217,7 @@ const AdminComplaintScreen = ({ navigation }) => {
                                 <TouchableOpacity
                                     style={[styles.actionBtn, { backgroundColor: '#3A86FF' }]}
                                     onPress={() => openReply(item)}>
-                                    <Text style={styles.actionBtnText}>💬 Reply & Update</Text>
+                                    <Text style={styles.actionBtnText}>💬 Reply</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.actionBtn, { backgroundColor: '#ef4444' }]}
@@ -197,18 +230,11 @@ const AdminComplaintScreen = ({ navigation }) => {
                 />
             )}
 
+            {/* Reply Modal */}
             <Modal visible={replyModal} transparent animationType="slide">
                 <View style={styles.modalBg}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>💬 Reply & Update</Text>
-
-                        {selected && (
-                            <View style={styles.modalInfo}>
-                                <Text style={{ fontWeight: '700', color: '#1a1a2e' }}>{selected.subject}</Text>
-                                <Text style={{ color: '#666', fontSize: 12, marginTop: 3 }}>by {selected.student?.name}</Text>
-                            </View>
-                        )}
-
                         <Text style={styles.modalLabel}>Status</Text>
                         <View style={styles.statusRow}>
                             {statuses.map(s => (
@@ -220,7 +246,6 @@ const AdminComplaintScreen = ({ navigation }) => {
                                 </TouchableOpacity>
                             ))}
                         </View>
-
                         <Text style={styles.modalLabel}>Admin Reply</Text>
                         <TextInput
                             style={[styles.modalInput, { height: 90 }]}
@@ -229,18 +254,16 @@ const AdminComplaintScreen = ({ navigation }) => {
                             onChangeText={setReplyText}
                             multiline
                         />
-
                         <TouchableOpacity
                             style={[styles.updateBtn, updating && { opacity: 0.6 }]}
                             onPress={handleUpdate}
                             disabled={updating}>
-                            <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>
+                            <Text style={{ color: '#fff', fontWeight: '700' }}>
                                 {updating ? 'Updating...' : '✅ Update'}
                             </Text>
                         </TouchableOpacity>
-
                         <TouchableOpacity onPress={() => setReplyModal(false)} style={{ marginTop: 12 }}>
-                            <Text style={{ textAlign: 'center', color: '#ef4444', fontWeight: '700' }}>Cancel</Text>
+                            <Text style={{ textAlign: 'center', color: '#ef4444' }}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -249,7 +272,7 @@ const AdminComplaintScreen = ({ navigation }) => {
     );
 };
 
-
+// Styles remain same as your original code
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#fff5f0' },
     header: {
@@ -289,7 +312,6 @@ const styles = StyleSheet.create({
     modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' },
     modalContent: { width: '90%', backgroundColor: '#fff', padding: 24, borderRadius: 25 },
     modalTitle: { fontSize: 18, fontWeight: '800', marginBottom: 14, textAlign: 'center', color: '#FB5607' },
-    modalInfo: { backgroundColor: '#fff5f0', borderRadius: 12, padding: 12, marginBottom: 14 },
     modalLabel: { fontSize: 13, fontWeight: '600', color: '#444', marginBottom: 6 },
     modalInput: { backgroundColor: '#fff5f0', borderRadius: 12, padding: 14, marginBottom: 12, fontSize: 14, borderWidth: 1, borderColor: '#fdd9c8' },
     statusRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
@@ -297,6 +319,5 @@ const styles = StyleSheet.create({
     statusBtnText: { fontSize: 12, fontWeight: '600', color: '#444' },
     updateBtn: { backgroundColor: '#FB5607', padding: 16, borderRadius: 14, alignItems: 'center' },
 });
-
 
 export default AdminComplaintScreen;
