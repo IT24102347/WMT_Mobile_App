@@ -6,6 +6,8 @@ import {
 } from 'react-native';
 import axios from 'axios';
 
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
+
 const API_BASE = 'https://wmt-mobile-app-xksy.vercel.app/api';
 
 const getToken = async () => {
@@ -13,7 +15,7 @@ const getToken = async () => {
         if (Platform.OS === 'web') {
             return localStorage.getItem('token');
         } else {
-            const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+          
             return await AsyncStorage.getItem('token');
         }
     } catch (err) {
